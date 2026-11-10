@@ -37,6 +37,18 @@ expand() {
 	esac
 }
 
+# The pause between pages may only be made longer than the template's (the README asks the same)
+DEFAULT_DELAY=`sed -n 's/^delay[ 	]*=[ 	]*//p' "${FOLDER}/alldata-mirror.conf" | head -1 | sed -e 's/[ 	]*$//'`
+
+# delay_ok VALUE: VALUE is N or MIN-MAX seconds, and neither end is below the default's
+delay_ok() {
+	printf '%s' "$1" | grep -Eq '^[0-9]+(\.[0-9]+)?(-[0-9]+(\.[0-9]+)?)?$' || return 1
+	awk -v v="$1" -v d="${DEFAULT_DELAY}" 'BEGIN {
+		if (split(v, a, "-") == 1) a[2] = a[1]
+		if (split(d, b, "-") == 1) b[2] = b[1]
+		exit !(a[1] + 0 >= b[1] + 0 && a[2] + 0 >= b[2] + 0 && a[2] + 0 >= a[1] + 0) }'
+}
+
 # ask KEY QUESTION: show KEY's current value and read a new one into ANSWER.  Enter keeps the current value.
 # Returns 1 if the value didn't change.
 ask() {
@@ -71,12 +83,12 @@ if [ -t 0 ]; then
 		ask output "Where should mirrors go?  Each vehicle gets its own folder in it.  To publish them, use a folder your web server serves." &&
 			set_value output "${ANSWER}"
 		echo
-		while ask delay "Seconds to wait before following each link: a number, or MIN-MAX for a random pause (ie: 5.01-6.99)"; do
-			if printf '%s' "${ANSWER}" | grep -Eq '^[0-9]+(\.[0-9]+)?(-[0-9]+(\.[0-9]+)?)?$'; then
+		while ask delay "Seconds to wait before following each link: a number, or MIN-MAX for a random pause.  It can only be made longer than the default, ${DEFAULT_DELAY}"; do
+			if delay_ok "${ANSWER}"; then
 				set_value delay "${ANSWER}"
 				break
 			fi
-			echo "    Please give a number of seconds, or two separated by a dash"
+			echo "    Please give a number of seconds, or MIN-MAX, no lower than ${DEFAULT_DELAY} (ie: ${DEFAULT_DELAY} or 8-10)"
 		done
 		echo
 		echo "Saved.  The settings are described in ${CFG}"
@@ -84,6 +96,13 @@ if [ -t 0 ]; then
 	esac
 elif [ ${NEW} = 1 ]; then
 	echo "** Check the settings in ${CFG} (at least output), or run $0 in a terminal to be asked"
+fi
+
+# A config edited by hand (or from an older setup.sh) mustn't go faster than the default either
+DELAY=`get delay`
+if ! delay_ok "${DELAY}"; then
+	echo "** delay = ${DELAY} in ${CFG} is faster than the default (or not valid); setting it back to ${DEFAULT_DELAY}"
+	set_value delay "${DEFAULT_DELAY}"
 fi
 
 OUTPUT=`expand "\`get output\`"`

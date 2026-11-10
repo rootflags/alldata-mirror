@@ -41,7 +41,8 @@ cd ~/alldata-mirror
 
 `setup.sh`:
 1. creates your config, `~/.alldata-mirror/alldata-mirror.conf`, from `alldata-mirror.conf`;
-2. asks where mirrors should go and how long to pause between pages;
+2. asks where mirrors should go and how long to pause between pages (it refuses anything shorter
+   than the default, 5.01–6.99 seconds, and resets a config edited to go faster);
 3. checks for Python 3.10 or newer, and offers to install it;
 4. makes `~/.alldata-mirror` and your cookies private, and creates the mirror folder;
 5. checks your cookies file, and tells you when your login expires.
