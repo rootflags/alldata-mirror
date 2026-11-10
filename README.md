@@ -11,6 +11,19 @@ images and PDFs. It never touches other vehicles, your account or anything off-s
 A full vehicle is around 17,000 pages and 12,000 images (about 2 GB). At the default pace of one page
 every 5–7 seconds, that takes about 40 hours.
 
+> [!IMPORTANT]
+> **This tool is for personal, non-commercial use.** It's designed to operate under fair use
+> principles: much as a subscriber may view the service manual data and print pages, this tool
+> retrieves the service manual for printing and searching.
+>
+> Throttling and rate limiting are built in, so that viewing and saving the data works like a human
+> being browsing the site and does not adversely impact the portal.
+> **DO NOT MODIFY THE DELAY PARAMETER EXCEPT TO INCREASE IT.**
+>
+> **The tool is free to use, but the data is not.** You must purchase an ALLDATA subscription to
+> obtain the service manual data you wish to mirror. All of ALLDATA's subscription and license terms,
+> including restrictions on duplication and resale, apply to your use and duplication of that data.
+
 ## Requirements
 
 - An ALLDATA Repair subscription with access to the vehicle.
@@ -41,7 +54,8 @@ Run it again any time to review the settings. Enter keeps the current value.
 
 ```ini
 [crawl]
-# Seconds to wait before following the next link: a number, or MIN-MAX for a random pause
+# Seconds to wait before following the next link: a number, or MIN-MAX for a random pause.
+# Only ever increase it.
 delay = 5.01-6.99
 # Where mirrors are written; each vehicle gets its own folder in it
 output = ~/alldata-download
@@ -104,7 +118,7 @@ takes about 20 seconds for a full vehicle.
 
 | Option | |
 |---|---|
-| `--delay N` or `--delay MIN-MAX` | Pause between pages, overriding the config |
+| `--delay N` or `--delay MIN-MAX` | Pause between pages, overriding the config. Only ever use it to slow down. |
 | `--max-pages N` | Stop after N pages, for a test run |
 | `--start PATH` | Start somewhere other than the vehicle's top page (`components/1`) |
 | `--output DIR` | Mirror folder, overriding the config (`build.py` takes it too) |
