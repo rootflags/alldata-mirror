@@ -1,0 +1,9 @@
+__pycache__/
+.venv/
+# Local data: never commit cookies, browser captures or mirrors
+cookies.txt
+session.json
+*.har
+*.devtools
+mirror/
+alldata-download/
